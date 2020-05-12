@@ -1,0 +1,43 @@
+<!doctype html>
+<html>
+<head>
+	<title> 실습과제02_2015112308</title>
+	<link href ="lecture5-3.css" type ="text/css" rel="stylesheet">
+	<style>
+	
+		body {
+			background-color : black; 
+			color : white;
+			margin-left : 30px;
+			margin-right : 30px ;
+		}
+	
+		h3{
+			font-size : 30px;
+			text-align : left;
+			color : white;
+		}
+		p {
+			font-size :20px;
+			color: white;
+		}
+		li {
+			font-size: 20px;
+			}
+	</style>
+</head>
+<body>
+	<h3>MySQL 테이블 생성 및 레코드 넣기</h3>
+	<br><br>
+	<ul> <li> 데이터베이스 선택</ul>
+	<p> <ul> USE lecture;</ul></p>
+	<ul> <li> 테이블 생성</ul>
+	<p> <ul>CREATE TABLE student(no int(11) NOT NULL,	name char(24) DEFAULT NULL,
+			PRIMATY KEY(no)) ENGINE=InnoDB DEFAULT CHARTSET=utf8;</ul></p>
+	<ul> <li> 레코드 넣기</ul>
+	<p> <ul>INSERT INTO student VALUES(9914,"Choi,Changrak");</ul></p>
+	<ul> <li> 테이블 내용 확인</ul>
+	<p> <ul>SLECT*FROM student;</ul></p>
+	
+</body>
+</html>
