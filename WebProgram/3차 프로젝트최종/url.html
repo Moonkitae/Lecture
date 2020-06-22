@@ -1,0 +1,50 @@
+
+<!DOCTYPE html >
+<html>
+<head>
+<title>Insert title here</title>
+</head>
+<body>
+<script>
+var qs = getQueryStringObject();
+var x = qs.x; // 925641
+var y = qs.y; // 1666020
+var l = qs.level; // 10
+function getQueryStringObject() {
+    var a = window.location.search.substr(1).split('&');
+    if (a == "") return {};
+    var b = {};
+    for (var i = 0; i < a.length; ++i) {
+        var p = a[i].split('=', 2);
+        if (p.length == 1)
+            b[p[0]] = "";
+        else
+            b[p[0]] = decodeURIComponent(p[1].replace(/\+/g, " "));
+    }
+    return b;
+}
+
+document.write(x+"입니다.<br>");
+
+var type = "1";
+var type2 = "2";
+
+function search(type,type2){
+  location.href="search.jsp?type="+type+"&type2=type"+type2;
+}
+function search(){
+  location.href="search.jsp?type=<%=type%>+&type2=<%=type2%>";
+}
+
+
+var url = request.getParameter("url");
+
+response.sendRedirect("login.jsp?url="+url);
+
+</script>
+<br>
+<button type="button" class="btn btn-sm btn-block blue" onclick="search(<%=type%>,<%=type2%>)">조회</button>
+    당신의 학번은 <b><% = request.getParameter(“x”) %></b> 입니다. <br/>
+    당신의 이름은 <b><% = request.getParameter(“name”) %></b> 입니다. <br/>
+</body>
+</html>

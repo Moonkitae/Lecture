@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html>
+<head><title>포커프로그램</title>
+
+<style>
+div{
+	display : inline-block;
+}
+img {
+	margin: 10px 10px 10px 10px;
+	width:100px;
+	height: 180px;
+	border-radius : 1px;
+}
+hr{
+	width: 893px;
+	margin-left: 0px;
+	height :10px;
+	background-color :black;
+	}
+
+</style>
+
+
+<title>Insert title here</title>
+
+</head>
+<script>
+var qs = getQueryStringObject();
+var user1 = qs.user1;  //url 통해 파라미터 받기
+var user2 = qs.user2; 
+
+function getQueryStringObject() {
+    var a = window.location.search.substr(1).split('&');
+    if (a == "") return {};
+    var b = {};
+    for (var i = 0; i < a.length; ++i) {
+        var p = a[i].split('=', 2);
+        if (p.length == 1)
+            b[p[0]] = "";
+        else
+            b[p[0]] = decodeURIComponent(p[1].replace(/\+/g, " "));
+    }
+    return b;
+}
+
+
+function play(){	//재경기시 새로고침
+	location.reload();
+	}
+function show(i){	//cards에 이미지를 뽑아오기
+	document.write("<img src="+cards[i]+">");
+	
+	}
+function check(A){	//중복없이 랜덤으로 뽑은 이미지를 출력
+	for(i=0;i<7;i++){
+		show(A[i]);
+		}
+	}
+function print(A){	//각 배열 확인하기 실제로 활용하진 않으나 코드작성시 확인을 위해 구현해둠
+	for(i=0;i<A.length;i++){
+		document.write(A[i]+" ");
+		}
+		document.write("<br>");
+	}
+function change(i){	// 각 숫자(1~52)에 따라 문양과 랭크를 입력
+	if(i<=13) {pattern="스페이드-"+i;}
+	else if(i<=26){pattern="다이아-"+(i-13);}
+	else if(i<=39){pattern="하트-"+(i-26);}
+	else {pattern="클로버-"+(i-39);}
+	var str = pattern.split('-');
+	return str;
+	}
+	
+function count_rank(A){	//숫자파트가 1~13까지 존재 하므로 7장을 받았을때  1이 몇장 2가 몇장 ...13이 몇장인지 확인 
+var tmp = new Array(13);
+var count=0;
+	for(i=0;i<13;i++){
+		for(j=0;j<8;j++){
+			if(i+1==A[j]) count++;
+		}
+		tmp[i]=count;
+		count=0;
+	}
+	return tmp;
+}
+function Is_straight(countA){ // 스트레이트면 위에서 만든 count_rank가 연속으로 5번 양수가 나와야함
+		tmp=0;
+		for(i=0;i<countA.length;i++){
+			if(countA[i]>0){
+				tmp++;
+				if(tmp>4) return 4;
+				}
+			else tmp=0;
+		}
+	}
+
+
+function compare1(countA){
+	count=0;
+	if(Is_straight(countA)==4) return 4;	//스트레이트면 4위
+	if(Math.max.apply(null,countA)==4) return 7;	// 같은게 4장이면 포카드
+	
+	else if(Math.max.apply(null,countA)==3){ //같은게 3장
+		for(i=0;i<countA.length;i++){
+			if(countA[i]==2) return 6; //같은게 3장 이면서 또 2장이 같은경우 풀하우스
+		}
+		return 3;
+	}
+	
+	
+	else if(Math.max.apply(null,countA)==2){	//같은게 2장인 경우
+		for(i=0;i<countA.length;i++){
+			if(countA[i]==2){	//count_rank에서 2인 값들이 몇개인지 확인
+			count++;
+			}
+		}
+		if (count==2 ||count==3) return 2; //같은게 2장인게 2개이면 2페어
+		else if(count==1) return 1; //2장인게 1개이면 1페어
+		else return 0; //아니면 탑
+	}
+	else return 0;
+	
+}
+
+	
+
+function count_pat(A){	//문양을 각 종류벌로 카운팅
+var tmp = new Array(4);
+var pat= ["스페이드","다이아","하트","클로버"];
+var count=0;
+	for(i=0;i<4;i++){
+		for(j=0;j<8;j++){
+			if(pat[i]==A[j]) count++;
+		}
+		tmp[i]=count;
+		count=0;
+	}
+	return tmp;
+}
+
+function compare2(countA){	// 같은문양이 5장이면 플러쉬
+	if(Math.max.apply(null,countA)==5) return 5;
+	else return 0;
+	}	
+
+
+
+function result(rank,pat){	//최종적으로 결과값 비교
+resultA=0; tmp=""
+if(compare1(count_rank(rank))==7 &&compare2(count_pat(pat))==5) { tmp="스트레이트 플러시";resultA=8;}
+else if(compare1(count_rank(rank))==7 &&compare2(count_pat(pat))!=5) { tmp="포카드";resultA=7;}
+else if(compare1(count_rank(rank))==6 ) { tmp="풀하우스";resultA=6;}
+else if(compare1(count_rank(rank))!=7 &&compare2(count_pat(pat))==5) { tmp="플러시";resultA=5;}
+else if(compare1(count_rank(rank))==4 &&compare2(count_pat(pat))!=5) { tmp="스트레이트";resultA=4;}
+else if(compare1(count_rank(rank))==3 &&compare2(count_pat(pat))!=5) { tmp="트리플";resultA=3;}
+else if(compare1(count_rank(rank))==2 &&compare2(count_pat(pat))!=5) { tmp="투페어";resultA=2;}
+else if(compare1(count_rank(rank))==1 &&compare2(count_pat(pat))!=5) { tmp="원페어";resultA=1;}
+else { tmp= "탑";resultA=0;}
+document.write(tmp.bold().big()+" ");
+return resultA;}
+
+
+function toprank(countA){ //top일경우 높은 숫자가 이기게하기
+tmp=0; result=0;
+for(i=0;i<countA.length;i++){
+	if(countA[i]==1){
+		tmp++;
+		if(tmp==7){
+		result=i}
+		}
+	}
+return result}
+
+function onepair(countA){ //원페어일 경우 높은 숫자가 이기게 하기, 2가 나올때 인덱스 저장
+result=0;
+for(i=0;i<countA.length;i++){
+	if(countA[i]==2){
+		result=i;}
+	}
+return result}
+
+function twopair(countA){	//투페어의 경우 높은 숫자가 이기게 하기, 마지막 2가 나올때 인덱스 저장
+tmp=0; result=0;
+for(i=0;i<countA.length;i++){
+	if(countA[i]==2){
+		tmp++;
+		if(tmp==2){
+		result=i}
+		}
+	}
+return result}
+
+
+	var cards =new Array(52)//사진 불러오기
+	var start=1
+	for(var i=1; i<5;i++){
+		for(var j=1; j<14;j++){
+		cards[start++]="C:/Users/kitae/Desktop/학교/2020-1학기/웹프/3차/"+i+"_"+j+".png";	
+		}
+	}
+	
+	var num=new Array(14) // 중복없는 14개 숫자 뽑기
+	for(i=0;i<14;i++){
+	num[i]=Math.floor(Math.random()*52+1);
+		for(j=0;j<i;j++){
+			if(num[j]==num[i]){
+				i--;
+				}
+			}
+		}
+	
+	var A =new Array(7); //플레이어 A 카드 만들어주기
+	var B =new Array(7);
+	
+	for(i=0;i<14;i++){
+		if(i<7){
+		A[i]=num[i];}
+		else{
+		B[i-7]=num[i];}
+		}
+
+	var rankA =new Array(7); //A의 숫자
+	var rankB =new Array(7); //A의 문양
+	var patA =new Array(7);
+	var patB =new Array(7);
+	for(i=0;i<7;i++){		//change를 돌리면 [다이아,11]이런식으로 저장되어 있음
+	rankA[i]=change(A[i])[1];
+	rankB[i]=change(B[i])[1];
+	patA[i]=change(A[i])[0];
+	patB[i]=change(B[i])[0];
+	}
+	
+
+countA=count_rank(rankA);
+countB=count_rank(rankB);
+</script>
+
+
+
+
+<body>
+<script>
+document.write(user1+"의 패는 ");tmpA=result(rankA,patA);
+document.write("vs ");
+document.write(user2+"의 패는 ");tmpB=result(rankB,patB);
+
+</script>
+<br>
+<input type="button" style="font-size: 15px; font-weight : bold; border-radius : 10px; border : 0px;
+		width:100px; height:30px; background-color:darkgray; color:white;margin-left:750px;" value="재경기" onclick="play()">
+<br>
+
+<h1> <script> document.write("user1의 이름 : "+ user1);</script></h1>
+
+<div style="background : white">
+	<script>
+	check(A);
+	</script>
+</div>
+<hr>
+
+
+<div style= width:800px;><h1 align="center"><script>
+
+if(tmpA>tmpB){ document.write("플레이어 1이 이겼습니다.");}
+else if (tmpA<tmpB){document.write("플레이어 2가 이겼습니다.");}
+else if(tmpA==0 &&tmpB==0){
+	if(toprank(countA)>toprank(countB)){
+	document.write("플레이어 1이 이겼습니다.");}
+	else if(toprank(countA)<toprank(countB)){
+	document.write("플레이어 2가 이겼습니다.");}
+	else{
+	document.write("무승부입니다. 재경기 하십시오.");}}
+else if(tmpA==1 &&tmpB==1){
+	if(onepair(countA)>onepair(countB)){
+	document.write("플레이어 1이 이겼습니다.");}
+	else if(onepair(countA)<onepair(countB)){
+	document.write("플레이어 2가 이겼습니다.");}
+	else{
+	document.write("무승부입니다. 재경기 하십시오.");}}
+else if(tmpA==2 &&tmpB==2){
+	if(twopair(countA)>twopair(countB)){
+	document.write("플레이어 1이 이겼습니다.");}
+	else if(twopair(countA)<twopair(countB)){
+	document.write("플레이어 2가 이겼습니다.");}
+	else{
+	document.write("무승부입니다. 재경기 하십시오.");}}	
+else
+document.write("무승부입니다. 재경기 하십시오.<br>");
+
+
+
+
+</script></h1></div>
+
+
+
+<hr>
+<h1><script>document.write("user2의 이름 : "+ user2);</script></h1>
+<div style="background : white">
+	<script>
+
+	check(B);
+	</script>
+	
+
+</div>
+</body>
+</html>

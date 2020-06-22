@@ -1,0 +1,28 @@
+
+print(num);
+print(A);print(B);
+document.write("<br>");
+print(rankA);
+document.write("<br>");
+countA=count_rank(rankA)
+// 스트레이트 플러시 > 포카드 > 풀하우스 > 플러시 > 스트레이트 > 트리플 > 투페어 > 원페어
+document.write("카운트 한 갯수는 ");print(countA);
+compare1(countA);
+document.write(compare1(countA)+"<br>");
+print(count_pat(patA));
+tmp=count_pat(patA);
+document.write(compare2(tmp));
+
+resultA=0;
+if(compare1(count_rank(rankA))==7 &&compare2(count_pat(patA))==5) { "스트레이트 플러시";resultA=8;}
+else if(compare1(count_rank(rankA))==7 &&compare2(count_pat(patA))!=5) { "포카드";resultA=7;}
+else if(compare1(count_rank(rankA))==6 ) { "풀하우스";resultA=6;}
+else if(compare1(count_rank(rankA))!=7 &&compare2(count_pat(patA))==5) { "플러시";resultA=5;}
+else if(compare1(count_rank(rankA))==4 &&compare2(count_pat(patA))!=5) { "스트레이트";resultA=4;}
+else if(compare1(count_rank(rankA))==3 &&compare2(count_pat(patA))!=5) { "트리플";resultA=3;}
+else if(compare1(count_rank(rankA))==2 &&compare2(count_pat(patA))!=5) { "투페어";resultA=2;}
+else if(compare1(count_rank(rankA))==1 &&compare2(count_pat(patA))!=5) { "원페어";resultA=1;}
+else { resultA=0;}
+
+document.write("<br>"+resultA+"<br>");
+
